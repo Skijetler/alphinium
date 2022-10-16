@@ -1,0 +1,7 @@
+rest:
+  addr: 0.0.0.0:8081
+  logger:
+    dir: logs
+    file: all.log
+auth:
+  addr: auth:9000
