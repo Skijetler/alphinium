@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package api.forum.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/Skijetler/alphinium/forum/api/forum/v1";
+
+service Forum {
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryReply) {
+    option (google.api.http) = {
+      post: "/forum/category/create"
+      body: "*"
+    };
+  };
+
+  rpc GetCategory(GetCategoryRequest) returns (GetCategoryReply) {
+    option (google.api.http) = {
+      get: "/forum/category/{category_id}"
+    };
+  };
+
+  rpc GetAllCategories(GetAllCategoriesRequest) returns (GetAllCategoriesReply) {
+    option (google.api.http) = {
+      get: "/forum/categories/all"
+    };
+  };
+
+  rpc CreateThread(CreateThreadRequest) returns (CreateThreadReply) {
+    option (google.api.http) = {
+      post: "/forum/thread/create"
+      body: "*"
+    };
+  };
+
+  rpc GetThread(GetThreadRequest) returns (GetThreadReply) {
+    option (google.api.http) = {
+      get: "/forum/thread/{thread_id}"
+    };
+  };
+
+  rpc ReplyToThread(ReplyToThreadRequest) returns (ReplyToThreadRequestReply) {
+    option (google.api.http) = {
+      post: "/forum/thread/{thread_id}/reply"
+      body: "*"
+    };
+  };
+}
+
+
+message CategoryBriefInfo {
+  string category_id = 1;
+  string category_name = 2;
+}
+
+message ThreadBriefInfo {
+  string thread_id = 1;
+  string thread_name = 2;
+  string creator_id = 3;
+  string creator_name = 4;
+  google.protobuf.Timestamp creation_date = 5;
+}
+
+message ThreadPost {
+  int64  thread_post_id = 1;
+  string user_id = 2;
+  string user_name = 3;
+  string message = 4[(validate.rules).string = {min_len: 4, max_len: 25000}];
+  google.protobuf.Timestamp date = 5;
+  repeated string attachments = 6;
+}
+
+
+message CreateCategoryRequest {
+  string category_name = 1;
+}
+
+message CreateCategoryReply {
+  string category_id = 1;
+}
+
+message GetCategoryRequest {
+  string category_id = 1;
+}
+
+message GetCategoryReply {
+  string category_id = 1;
+  repeated ThreadBriefInfo threads = 2;
+}
+
+message GetAllCategoriesRequest {}
+
+message GetAllCategoriesReply {
+  repeated CategoryBriefInfo categories = 1;
+}
+
+message GetThreadRequest {
+  string thread_id = 1;
+}
+
+message GetThreadReply {
+  ThreadBriefInfo basic_info = 1;
+  repeated ThreadPost posts  = 2;
+}
+
+message CreateThreadRequest {
+  string category_id = 1;
+  string thread_name = 2;
+  ThreadPost thread_description = 3;
+}
+
+message CreateThreadReply {
+  string thread_id = 1;
+}
+
+message ReplyToThreadRequest {
+  ThreadPost post = 1;
+}
+
+message ReplyToThreadRequestReply {
+  bool succeed = 1;
+}

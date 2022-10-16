@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package api.auth.v1;
+
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/Skijetler/alphinium/auth/api/auth/v1";
+
+service Auth {
+  rpc SignUp(SignUpRequest) returns (SignUpReply) {
+    option (google.api.http) = {
+      post: "/auth/sign-up"
+      body: "*"
+    };
+  };
+
+  rpc SignIn(SignInRequest) returns (SignInReply) {
+    option (google.api.http) = {
+      post: "/auth/sign-in"
+      body: "*"
+    };
+  };
+
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenReply) {
+    option (google.api.http) = {
+      post: "/auth/refresh"
+      body: "*"
+    };
+  };
+
+  rpc Identify(IdentifyRequest) returns (IdentifyReply) {};
+}
+
+
+message Tokens {
+  string access_token = 1;
+  string refresh_token = 2;
+}
+
+
+message SignUpRequest {
+  string username = 1[(validate.rules).string = {pattern: "(?i)^[A-Za-z0-9_]+$", min_len: 4, max_len: 64}];
+  string email = 2[(validate.rules).string.email = true];
+  string password = 3[(validate.rules).string.min_len = 12];
+  string repeat_password = 4[(validate.rules).string.min_len = 12];
+  string gender = 6[(validate.rules).string = {in: ["Female", "Male", "Other"]}];
+}
+
+message SignUpReply {
+  Tokens tokens = 1;
+}
+
+message SignInRequest {
+  string username = 1[(validate.rules).string = {pattern: "(?i)^[A-Za-z0-9_]+$", min_len: 4, max_len: 64}];
+  string password = 2[(validate.rules).string.min_len = 12];
+}
+
+message SignInReply {
+  Tokens tokens = 1;
+}
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenReply {
+  Tokens tokens = 1;
+}
+
+message IdentifyRequest {
+  string access_token = 1;
+}
+
+message IdentifyReply {
+  string user_id = 1;
+}
