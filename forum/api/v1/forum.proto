@@ -28,6 +28,19 @@ service Forum {
     };
   };
 
+  rpc CreateSubCategory(CreateSubCategoryRequest) returns (CreateSubCategoryReply) {
+    option (google.api.http) = {
+      post: "/forum/subcategory/create"
+      body: "*"
+    };
+  };
+
+  rpc GetSubCategory(GetSubCategoryRequest) returns (GetSubCategoryReply) {
+    option (google.api.http) = {
+      get: "/forum/subcategory/{subcategory_id}"
+    };
+  };
+
   rpc CreateThread(CreateThreadRequest) returns (CreateThreadReply) {
     option (google.api.http) = {
       post: "/forum/thread/create"
@@ -51,25 +64,36 @@ service Forum {
 
 
 message CategoryBriefInfo {
-  string category_id = 1;
-  string category_name = 2;
+  uint64 id = 1;
+  string name = 2;
+}
+
+message SubCategoryBriefInfo {
+  uint64 id = 1;
+  string name = 2;
 }
 
 message ThreadBriefInfo {
-  string thread_id = 1;
-  string thread_name = 2;
-  string creator_id = 3;
+  uint64 id = 1;
+  string name = 2;
+  uint64 creator_id = 3;
   string creator_name = 4;
   google.protobuf.Timestamp creation_date = 5;
 }
 
+message UserInfo {
+  uint64 id = 1;
+  string name = 2;
+  string name_color = 3;
+  string title = 4;
+}
+
 message ThreadPost {
-  int64  thread_post_id = 1;
-  string user_id = 2;
-  string user_name = 3;
-  string message = 4[(validate.rules).string = {min_len: 4, max_len: 25000}];
-  google.protobuf.Timestamp date = 5;
-  repeated string attachments = 6;
+  uint64 id = 1;
+  UserInfo user = 2;
+  string message = 3[(validate.rules).string = {min_len: 4, max_len: 25000}];
+  google.protobuf.Timestamp date = 4;
+  repeated string attachments = 5;
 }
 
 
@@ -78,16 +102,16 @@ message CreateCategoryRequest {
 }
 
 message CreateCategoryReply {
-  string category_id = 1;
+  uint64 category_id = 1;
 }
 
 message GetCategoryRequest {
-  string category_id = 1;
+  uint64 category_id = 1;
 }
 
 message GetCategoryReply {
-  string category_id = 1;
-  repeated ThreadBriefInfo threads = 2;
+  string category_name = 1;
+  repeated SubCategoryBriefInfo subcategories = 2;
 }
 
 message GetAllCategoriesRequest {}
@@ -96,8 +120,29 @@ message GetAllCategoriesReply {
   repeated CategoryBriefInfo categories = 1;
 }
 
+message CreateSubCategoryRequest {
+  uint64 category_id = 1;
+  string subcategory_name = 2;
+  string subcategory_desc = 3;
+}
+
+message CreateSubCategoryReply {
+  uint64 subcategory_id = 1;
+}
+
+message GetSubCategoryRequest {
+  uint64 subcategory_id = 1;
+}
+
+message GetSubCategoryReply {
+  CategoryBriefInfo category = 1;
+  string subcategory_name = 2;
+  string subcategory_desc = 3;
+  repeated ThreadBriefInfo threads = 4;
+}
+
 message GetThreadRequest {
-  string thread_id = 1;
+  uint64 thread_id = 1;
 }
 
 message GetThreadReply {
@@ -106,13 +151,13 @@ message GetThreadReply {
 }
 
 message CreateThreadRequest {
-  string category_id = 1;
+  uint64 category_id = 1;
   string thread_name = 2;
   ThreadPost thread_description = 3;
 }
 
 message CreateThreadReply {
-  string thread_id = 1;
+  uint64 thread_id = 1;
 }
 
 message ReplyToThreadRequest {

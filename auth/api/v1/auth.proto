@@ -73,5 +73,5 @@ message IdentifyRequest {
 }
 
 message IdentifyReply {
-  string user_id = 1;
+  uint64 user_id = 1;
 }
