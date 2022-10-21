@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	conf "github.com/Skijetler/alphinium/gateway/internal/config"
+	"github.com/sirupsen/logrus"
 	"go.opencensus.io/plugin/ochttp"
 	"log"
 	"net/http"
@@ -33,7 +34,7 @@ func newGatewayServer(conf *conf.Config, oc *ochttp.Handler) *http.Server {
 	}
 }
 
-func customHandler(mux *runtime.ServeMux, logger *log.Logger) (http.Handler, error) {
+func customHandler(mux *runtime.ServeMux, logger *logrus.Logger) (http.Handler, error) {
 	if err := mux.HandlePath(
 		"GET",
 		"/health",

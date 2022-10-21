@@ -15,7 +15,7 @@ type User struct {
 func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint64("id"),
-		field.String("username").Unique(),
+		field.String("name").Unique(),
 		field.String("email").Unique(),
 		field.String("password"),
 		field.Time("registration_date").Immutable(),

@@ -7,16 +7,29 @@ import (
 )
 
 type Config struct {
-	Rest struct {
-		Addr string `yaml:"addr"`
-	} `yaml:"rest"`
+	Server struct {
+		Http struct {
+			Addr string `yaml:"addr"`
+		} `yaml:"http"`
+		Grpc struct {
+			Addr string `yaml:"addr"`
+		} `yaml:"grpc"`
+	} `yaml:"server"`
 	Logger struct {
 		Dir  string `yaml:"dir"`
 		File string `yaml:"file"`
 	} `yaml:"logger"`
-	Auth struct {
-		Addr string `yaml:"addr"`
-	} `yaml:"auth"`
+	Storage struct {
+		Database struct {
+			Driver string `yaml:"driver"`
+			Source string `yaml:"source"`
+		} `yaml:"database"`
+		Redis struct {
+			Addr     string `yaml:"addr"`
+			Password string `yaml:"password"`
+			DB       int    `yaml:"db"`
+		} `yaml:"redis"`
+	} `yaml:"storage"`
 }
 
 var instance *Config

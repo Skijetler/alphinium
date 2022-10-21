@@ -3,6 +3,7 @@ package logger
 import (
 	"fmt"
 	conf "github.com/Skijetler/alphinium/gateway/internal/config"
+	"github.com/sirupsen/logrus"
 	"io"
 	"os"
 	"path"

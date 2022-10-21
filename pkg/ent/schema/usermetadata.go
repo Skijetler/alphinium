@@ -15,7 +15,7 @@ type UserMetadata struct {
 func (UserMetadata) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint64("id"),
-		field.String("color"), // hex
+		field.String("name_color"), // hex
 		field.String("title"),
 		field.String("gender"),
 		field.Time("last_online"),

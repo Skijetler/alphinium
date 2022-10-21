@@ -1,6 +1,9 @@
 package registers
 
-import "context"
+import (
+	"context"
+	"github.com/google/wire"
+)
 
 var ProviderSet = wire.NewSet(RegisterAll)
 
