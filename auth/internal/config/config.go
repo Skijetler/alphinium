@@ -4,6 +4,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/sirupsen/logrus"
 	"sync"
+	"time"
 )
 
 type Config struct {
@@ -30,6 +31,23 @@ type Config struct {
 			DB       int    `yaml:"db"`
 		} `yaml:"redis"`
 	} `yaml:"storage"`
+	Hasher struct {
+		Salt       string `yaml:"salt"`
+		Iterations uint32 `yaml:"iterations"`
+		Memory     uint32 `yaml:"memory"`
+		Threads    uint8  `yaml:"threads"`
+		KeyLen     uint32 `yaml:"keyLen"`
+	} `yaml:"hasher"`
+	UUID struct {
+		Iterations int `yaml:"iterations"`
+	} `yaml:"uuid"`
+	TokenMaker struct {
+		AccessKey  string        `yaml:"accessKey"`
+		AccessTtl  time.Duration `yaml:"accessTtl"`
+		RefreshKey string        `yaml:"refreshKey"`
+		RefreshTtl time.Duration `yaml:"refreshTtl"`
+		Assert     string        `yaml:"assert"`
+	} `yaml:"tokenMaker"`
 }
 
 var instance *Config

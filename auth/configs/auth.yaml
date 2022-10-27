@@ -18,3 +18,16 @@ storage:
     addr: "localhost:6379"
     password: ""
     db: 0
+
+hasher:
+  salt: Viq8FZ7cR9hcVV4SRh8FI7qAd81uUMJr
+
+uuid:
+  iterations: 5 # max iterations if generated uuid already exists
+
+tokenMaker:
+  accessKey: dc8bdf962b54e05b8dd9b728d8096aff4150a74b88fba2d60ec27e49be9e0013
+  accessTtl: 900s # 15 min
+  refreshKey: 11d220fcff4d1a18d671553293d2a1c358729de1d20d7e598a890b24075180f9
+  refreshTtl: 86400s # 24 h
+  assert: assert
