@@ -7,10 +7,14 @@ import (
 	"net/http"
 )
 
-func NewHTTPServer(conf *config.Config, log *logrus.Logger) *http.ServeMux {
+func NewHTTPServer(conf *config.Config, log *logrus.Logger) *http.Server {
 	log.Info("New HTTP Server")
 	mux := http.NewServeMux()
 
 	mux.Handle("/metrics", promhttp.Handler())
-	return mux
+
+	return &http.Server{
+		Addr:    conf.Server.Http.Addr,
+		Handler: mux,
+	}
 }

@@ -1,17 +1,33 @@
-package auth
+//go:build wireinject
+// +build wireinject
 
-import "os"
+// The build tag makes sure the stub is not built in the final build.
 
-// go build -ldflags "-X main.Version=x.y.z"
-var (
-	// Name is the name of the compiled software.
-	Name string = "Auth"
-	// Version is the version of the compiled software.
-	Version string
-	// flagconf is the config flag.
-	flagconf string
-	// prefixs is the config environment variable prefix
-	prefixs = []string{"ALPHINIUM_AUTH_", "AUTH_"}
+package main
 
-	id, _ = os.Hostname()
+import (
+	"github.com/Skijetler/alphinium/auth/internal/app"
+	"github.com/Skijetler/alphinium/auth/internal/config"
+	"github.com/Skijetler/alphinium/auth/internal/pkg/hash"
+	"github.com/Skijetler/alphinium/auth/internal/pkg/paseto"
+	"github.com/Skijetler/alphinium/auth/internal/repo"
+	"github.com/Skijetler/alphinium/auth/internal/server"
+	"github.com/Skijetler/alphinium/auth/internal/service"
+	"github.com/Skijetler/alphinium/auth/internal/usecase"
+	"github.com/google/wire"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/sirupsen/logrus"
 )
+
+// wireApp init application.
+func wireApp(*config.Config, *grpc_prometheus.ServerMetrics, *logrus.Logger) (*app.App, func(), error) {
+	panic(wire.Build(
+		server.ProviderSet,
+		repo.ProviderSet,
+		usecase.ProviderSet,
+		service.ProviderSet,
+		hash.ProviderSet,
+		paseto.ProviderSet,
+		newApp),
+	)
+}

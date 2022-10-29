@@ -42,7 +42,7 @@ proto:
 wire:
 	go mod tidy
 	go get -d github.com/google/wire/cmd/wire@latest
-	go generate ./...
+	go wire ./...
 
 ,PHONY: generate
 generate:
