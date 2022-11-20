@@ -29,6 +29,7 @@ type AuthRepo interface {
 	SaveUser(context.Context, *User) (*User, error)
 	GetUserByUsername(context.Context, string) (*User, error)
 	GetUserByEmail(context.Context, string) (*User, error)
+	CheckUserIsDisabled(context.Context, uint64) (bool, error)
 	SaveSession(context.Context, *Session) (string, error)
 	UpdateSessionTTLById(context.Context, string) (bool, error)
 	GetSessionById(context.Context, string) (*Session, error)
@@ -94,6 +95,10 @@ func (uc *AuthUsecase) ComparePassword(ctx context.Context, username, pass strin
 		return nil, ErrWrongPassword
 	}
 
+	if model.Disabled {
+		return nil, ErrUserIsDisabled
+	}
+
 	return model, nil
 }
 
@@ -110,12 +115,29 @@ func (uc *AuthUsecase) CreateSession(ctx context.Context, s *Session) (string, e
 
 // GetIdFromRefresh parse refresh token & return session id
 func (uc *AuthUsecase) GetIdFromRefresh(ctx context.Context, refresh string) (string, error) {
-	uc.log.WithContext(ctx).Infof("GetIdFromRefresh: " + refresh)
+	uc.log.WithContext(ctx).Infof("GetIdFromRefresh: %v", refresh)
 
 	id, err := uc.tokenMaker.ParseRefreshToken(refresh)
 	if err != nil {
 		uc.log.WithContext(ctx).Errorf("GetIdFromRefresh error: %v", err)
 		return "", ErrInvalidToken
+	}
+
+	session, err := uc.repo.GetSessionById(ctx, id)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetIdFromRefresh error: %v", err)
+		return "", ErrInvalidSession
+	}
+
+	userIsDisabled, err := uc.repo.CheckUserIsDisabled(ctx, session.UserId)
+	if err != nil {
+		uc.log.WithContext(ctx).Errorf("GetIdFromRefresh error: %v", err)
+		return "", ErrUserNotFound
+	}
+
+	if userIsDisabled {
+		uc.log.WithContext(ctx).Errorf("GetIdFromRefresh error: %v", err)
+		return "", ErrUserIsDisabled
 	}
 
 	return id, nil
@@ -129,7 +151,7 @@ func (uc *AuthUsecase) Identify(ctx context.Context, access string) (*Session, e
 		return nil, ErrInvalidToken
 	}
 
-	uc.log.WithContext(ctx).Infof("Identity: " + sessionId)
+	uc.log.WithContext(ctx).Infof("Identity: %v", sessionId)
 
 	s, err := uc.repo.GetSessionById(ctx, sessionId)
 	if err != nil {

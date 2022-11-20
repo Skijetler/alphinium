@@ -155,6 +155,15 @@ func (r *authRepo) GetUserByEmail(ctx context.Context, email string) (*usecase.U
 	}, nil
 }
 
+func (r *authRepo) CheckUserIsDisabled(ctx context.Context, userId uint64) (bool, error) {
+	u, err := r.repo.db.User.Get(ctx, userId)
+	if err != nil {
+		return false, err
+	}
+
+	return u.Disabled, nil
+}
+
 func (r *authRepo) SaveSession(ctx context.Context, s *usecase.Session) (string, error) {
 	var sessionId string
 	var isKeyExists bool
