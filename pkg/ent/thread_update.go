@@ -243,8 +243,8 @@ func (tu *ThreadUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if tu.mutation.DescriptionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   thread.DescriptionTable,
 			Columns: []string{thread.DescriptionColumn},
 			Bidi:    false,
@@ -259,8 +259,8 @@ func (tu *ThreadUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if nodes := tu.mutation.DescriptionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   thread.DescriptionTable,
 			Columns: []string{thread.DescriptionColumn},
 			Bidi:    false,
@@ -593,8 +593,8 @@ func (tuo *ThreadUpdateOne) sqlSave(ctx context.Context) (_node *Thread, err err
 	}
 	if tuo.mutation.DescriptionCleared() {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   thread.DescriptionTable,
 			Columns: []string{thread.DescriptionColumn},
 			Bidi:    false,
@@ -609,8 +609,8 @@ func (tuo *ThreadUpdateOne) sqlSave(ctx context.Context) (_node *Thread, err err
 	}
 	if nodes := tuo.mutation.DescriptionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   thread.DescriptionTable,
 			Columns: []string{thread.DescriptionColumn},
 			Bidi:    false,

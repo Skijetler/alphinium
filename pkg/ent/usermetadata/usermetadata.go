@@ -7,8 +7,8 @@ const (
 	Label = "user_metadata"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldColor holds the string denoting the color field in the database.
-	FieldColor = "color"
+	// FieldNameColor holds the string denoting the name_color field in the database.
+	FieldNameColor = "name_color"
 	// FieldTitle holds the string denoting the title field in the database.
 	FieldTitle = "title"
 	// FieldGender holds the string denoting the gender field in the database.
@@ -33,7 +33,7 @@ const (
 // Columns holds all SQL columns for usermetadata fields.
 var Columns = []string{
 	FieldID,
-	FieldColor,
+	FieldNameColor,
 	FieldTitle,
 	FieldGender,
 	FieldLastOnline,

@@ -1,0 +1,615 @@
+# Generated with protoc-gen-openapi
+# https://github.com/google/gnostic/tree/master/cmd/protoc-gen-openapi
+
+openapi: 3.0.3
+info:
+    title: Forum API
+    version: 0.0.1
+paths:
+    /forum/categories/all:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetAllCategories
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetAllCategoriesReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/category/create:
+        post:
+            tags:
+                - Forum
+            operationId: Forum_CreateCategory
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateCategoryRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateCategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/category/{categoryId}:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetCategory
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetCategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Forum
+            operationId: Forum_DeleteCategory
+            parameters:
+                - name: categoryId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteCategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/post/{postId}:
+        delete:
+            tags:
+                - Forum
+            operationId: Forum_DeletePost
+            parameters:
+                - name: postId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeletePostReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/posts/last:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetLastPosts
+            parameters:
+                - name: num
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetLastPostsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/subcategory/create:
+        post:
+            tags:
+                - Forum
+            operationId: Forum_CreateSubcategory
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateSubcategoryRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateSubcategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/subcategory/{subcategoryId}:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetSubcategory
+            parameters:
+                - name: subcategoryId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetSubcategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Forum
+            operationId: Forum_DeleteSubcategory
+            parameters:
+                - name: subcategoryId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteSubcategoryReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/thread/create:
+        post:
+            tags:
+                - Forum
+            operationId: Forum_CreateThread
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateThreadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateThreadReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/thread/{threadId}:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetThread
+            parameters:
+                - name: threadId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetThreadReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+        delete:
+            tags:
+                - Forum
+            operationId: Forum_DeleteThread
+            parameters:
+                - name: threadId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DeleteThreadReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/thread/{threadId}/reply:
+        post:
+            tags:
+                - Forum
+            operationId: Forum_ReplyToThread
+            parameters:
+                - name: threadId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ReplyToThreadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ReplyToThreadReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /forum/thread/{threadId}/{page}:
+        get:
+            tags:
+                - Forum
+            operationId: Forum_GetThreadPosts
+            parameters:
+                - name: threadId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+                - name: page
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint64
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/GetThreadPostsReply'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+components:
+    schemas:
+        Attachment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+                size:
+                    type: string
+                type:
+                    type: string
+                link:
+                    type: string
+        CategoryBasicInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+        CreateCategoryReply:
+            type: object
+            properties:
+                categoryId:
+                    type: integer
+                    format: uint64
+        CreateCategoryRequest:
+            type: object
+            properties:
+                categoryName:
+                    type: string
+        CreateSubcategoryReply:
+            type: object
+            properties:
+                subcategoryId:
+                    type: integer
+                    format: uint64
+        CreateSubcategoryRequest:
+            type: object
+            properties:
+                categoryId:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+                description:
+                    type: string
+        CreateThreadReply:
+            type: object
+            properties:
+                threadId:
+                    type: integer
+                    format: uint64
+        CreateThreadRequest:
+            type: object
+            properties:
+                categoryId:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+                description:
+                    $ref: '#/components/schemas/ThreadPostCreation'
+        DeleteCategoryReply:
+            type: object
+            properties:
+                succeed:
+                    type: boolean
+        DeletePostReply:
+            type: object
+            properties:
+                succeed:
+                    type: boolean
+        DeleteSubcategoryReply:
+            type: object
+            properties:
+                succeed:
+                    type: boolean
+        DeleteThreadReply:
+            type: object
+            properties:
+                succeed:
+                    type: boolean
+        GetAllCategoriesReply:
+            type: object
+            properties:
+                categories:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/CategoryBasicInfo'
+        GetCategoryReply:
+            type: object
+            properties:
+                basicInfo:
+                    $ref: '#/components/schemas/CategoryBasicInfo'
+                subcategories:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SubcategoryBasicInfo'
+        GetLastPostsReply:
+            type: object
+            properties:
+                posts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ThreadPost'
+        GetSubcategoryReply:
+            type: object
+            properties:
+                basicInfo:
+                    $ref: '#/components/schemas/SubcategoryBasicInfo'
+                description:
+                    type: string
+                pages:
+                    type: integer
+                    format: uint64
+                threads:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ThreadBriefInfo'
+        GetThreadPostsReply:
+            type: object
+            properties:
+                posts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ThreadPost'
+        GetThreadReply:
+            type: object
+            properties:
+                basicInfo:
+                    $ref: '#/components/schemas/ThreadBasicInfo'
+                description:
+                    $ref: '#/components/schemas/ThreadPost'
+                posts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/ThreadPost'
+        GoogleProtobufAny:
+            type: object
+            properties:
+                '@type':
+                    type: string
+                    description: The type of the serialized message.
+            additionalProperties: true
+            description: Contains an arbitrary serialized message along with a @type that describes the type of the serialized message.
+        ReplyToThreadReply:
+            type: object
+            properties:
+                succeed:
+                    type: boolean
+        ReplyToThreadRequest:
+            type: object
+            properties:
+                threadId:
+                    type: integer
+                    format: uint64
+                post:
+                    $ref: '#/components/schemas/ThreadPostCreation'
+        Status:
+            type: object
+            properties:
+                code:
+                    type: integer
+                    description: The status code, which should be an enum value of [google.rpc.Code][google.rpc.Code].
+                    format: int32
+                message:
+                    type: string
+                    description: A developer-facing error message, which should be in English. Any user-facing error message should be localized and sent in the [google.rpc.Status.details][google.rpc.Status.details] field, or localized by the client.
+                details:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/GoogleProtobufAny'
+                    description: A list of messages that carry the error details.  There is a common set of message types for APIs to use.
+            description: 'The `Status` type defines a logical error model that is suitable for different programming environments, including REST APIs and RPC APIs. It is used by [gRPC](https://github.com/grpc). Each `Status` message contains three pieces of data: error code, error message, and error details. You can find out more about this error model and how to work with it in the [API Design Guide](https://cloud.google.com/apis/design/errors).'
+        SubcategoryBasicInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+        ThreadBasicInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+        ThreadBriefInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+                creatorId:
+                    type: integer
+                    format: uint64
+                creatorName:
+                    type: string
+                creatorAvatar:
+                    type: string
+                creationDate:
+                    type: string
+                    format: date-time
+        ThreadPost:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                user:
+                    $ref: '#/components/schemas/UserInfo'
+                message:
+                    type: string
+                date:
+                    type: string
+                    format: date-time
+                attachments:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/Attachment'
+        ThreadPostCreation:
+            type: object
+            properties:
+                message:
+                    type: string
+                attachmentsIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint64
+        UserInfo:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint64
+                name:
+                    type: string
+                nameColor:
+                    type: string
+                title:
+                    type: string
+                avatar:
+                    type: string
+                joinDate:
+                    type: string
+                    format: date-time
+tags:
+    - name: Forum

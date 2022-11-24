@@ -25,6 +25,9 @@ type Config struct {
 			Source string `yaml:"source"`
 		} `yaml:"database"`
 	} `yaml:"storage"`
+	Forum struct {
+		PostsPerPage uint64 `yaml:"postsPerPage"`
+	} `yaml:"forum"`
 }
 
 var instance *Config

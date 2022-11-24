@@ -372,6 +372,34 @@ func HasThreadWith(preds ...predicate.Thread) predicate.Post {
 	})
 }
 
+// HasDescribedThread applies the HasEdge predicate on the "described_thread" edge.
+func HasDescribedThread() predicate.Post {
+	return predicate.Post(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DescribedThreadTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, DescribedThreadTable, DescribedThreadColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDescribedThreadWith applies the HasEdge predicate on the "described_thread" edge with a given conditions (other predicates).
+func HasDescribedThreadWith(preds ...predicate.Thread) predicate.Post {
+	return predicate.Post(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.To(DescribedThreadInverseTable, FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, DescribedThreadTable, DescribedThreadColumn),
+		)
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // HasUser applies the HasEdge predicate on the "user" edge.
 func HasUser() predicate.Post {
 	return predicate.Post(func(s *sql.Selector) {

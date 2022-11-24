@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -26,6 +27,9 @@ func (Post) Fields() []ent.Field {
 func (Post) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.From("thread", Thread.Type).Ref("posts").Unique().Required().Field("thread_id"),
+		edge.To("described_thread", Thread.Type).Unique().Annotations(entsql.Annotation{
+			OnDelete: entsql.Cascade,
+		}),
 		edge.From("user", User.Type).Ref("posts").Unique().Required().Field("user_id"),
 		edge.To("attachments", Attachment.Type),
 	}

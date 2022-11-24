@@ -81,10 +81,10 @@ func IDLTE(id uint64) predicate.UserMetadata {
 	})
 }
 
-// Color applies equality check predicate on the "color" field. It's identical to ColorEQ.
-func Color(v string) predicate.UserMetadata {
+// NameColor applies equality check predicate on the "name_color" field. It's identical to NameColorEQ.
+func NameColor(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldColor), v))
+		s.Where(sql.EQ(s.C(FieldNameColor), v))
 	})
 }
 
@@ -116,102 +116,102 @@ func UserID(v uint64) predicate.UserMetadata {
 	})
 }
 
-// ColorEQ applies the EQ predicate on the "color" field.
-func ColorEQ(v string) predicate.UserMetadata {
+// NameColorEQ applies the EQ predicate on the "name_color" field.
+func NameColorEQ(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C(FieldColor), v))
+		s.Where(sql.EQ(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorNEQ applies the NEQ predicate on the "color" field.
-func ColorNEQ(v string) predicate.UserMetadata {
+// NameColorNEQ applies the NEQ predicate on the "name_color" field.
+func NameColorNEQ(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.NEQ(s.C(FieldColor), v))
+		s.Where(sql.NEQ(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorIn applies the In predicate on the "color" field.
-func ColorIn(vs ...string) predicate.UserMetadata {
+// NameColorIn applies the In predicate on the "name_color" field.
+func NameColorIn(vs ...string) predicate.UserMetadata {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.In(s.C(FieldColor), v...))
+		s.Where(sql.In(s.C(FieldNameColor), v...))
 	})
 }
 
-// ColorNotIn applies the NotIn predicate on the "color" field.
-func ColorNotIn(vs ...string) predicate.UserMetadata {
+// NameColorNotIn applies the NotIn predicate on the "name_color" field.
+func NameColorNotIn(vs ...string) predicate.UserMetadata {
 	v := make([]any, len(vs))
 	for i := range v {
 		v[i] = vs[i]
 	}
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.NotIn(s.C(FieldColor), v...))
+		s.Where(sql.NotIn(s.C(FieldNameColor), v...))
 	})
 }
 
-// ColorGT applies the GT predicate on the "color" field.
-func ColorGT(v string) predicate.UserMetadata {
+// NameColorGT applies the GT predicate on the "name_color" field.
+func NameColorGT(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.GT(s.C(FieldColor), v))
+		s.Where(sql.GT(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorGTE applies the GTE predicate on the "color" field.
-func ColorGTE(v string) predicate.UserMetadata {
+// NameColorGTE applies the GTE predicate on the "name_color" field.
+func NameColorGTE(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.GTE(s.C(FieldColor), v))
+		s.Where(sql.GTE(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorLT applies the LT predicate on the "color" field.
-func ColorLT(v string) predicate.UserMetadata {
+// NameColorLT applies the LT predicate on the "name_color" field.
+func NameColorLT(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.LT(s.C(FieldColor), v))
+		s.Where(sql.LT(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorLTE applies the LTE predicate on the "color" field.
-func ColorLTE(v string) predicate.UserMetadata {
+// NameColorLTE applies the LTE predicate on the "name_color" field.
+func NameColorLTE(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.LTE(s.C(FieldColor), v))
+		s.Where(sql.LTE(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorContains applies the Contains predicate on the "color" field.
-func ColorContains(v string) predicate.UserMetadata {
+// NameColorContains applies the Contains predicate on the "name_color" field.
+func NameColorContains(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.Contains(s.C(FieldColor), v))
+		s.Where(sql.Contains(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorHasPrefix applies the HasPrefix predicate on the "color" field.
-func ColorHasPrefix(v string) predicate.UserMetadata {
+// NameColorHasPrefix applies the HasPrefix predicate on the "name_color" field.
+func NameColorHasPrefix(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.HasPrefix(s.C(FieldColor), v))
+		s.Where(sql.HasPrefix(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorHasSuffix applies the HasSuffix predicate on the "color" field.
-func ColorHasSuffix(v string) predicate.UserMetadata {
+// NameColorHasSuffix applies the HasSuffix predicate on the "name_color" field.
+func NameColorHasSuffix(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.HasSuffix(s.C(FieldColor), v))
+		s.Where(sql.HasSuffix(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorEqualFold applies the EqualFold predicate on the "color" field.
-func ColorEqualFold(v string) predicate.UserMetadata {
+// NameColorEqualFold applies the EqualFold predicate on the "name_color" field.
+func NameColorEqualFold(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.EqualFold(s.C(FieldColor), v))
+		s.Where(sql.EqualFold(s.C(FieldNameColor), v))
 	})
 }
 
-// ColorContainsFold applies the ContainsFold predicate on the "color" field.
-func ColorContainsFold(v string) predicate.UserMetadata {
+// NameColorContainsFold applies the ContainsFold predicate on the "name_color" field.
+func NameColorContainsFold(v string) predicate.UserMetadata {
 	return predicate.UserMetadata(func(s *sql.Selector) {
-		s.Where(sql.ContainsFold(s.C(FieldColor), v))
+		s.Where(sql.ContainsFold(s.C(FieldNameColor), v))
 	})
 }
 

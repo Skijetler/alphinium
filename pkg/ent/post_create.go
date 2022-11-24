@@ -58,6 +58,25 @@ func (pc *PostCreate) SetThread(t *Thread) *PostCreate {
 	return pc.SetThreadID(t.ID)
 }
 
+// SetDescribedThreadID sets the "described_thread" edge to the Thread entity by ID.
+func (pc *PostCreate) SetDescribedThreadID(id uint64) *PostCreate {
+	pc.mutation.SetDescribedThreadID(id)
+	return pc
+}
+
+// SetNillableDescribedThreadID sets the "described_thread" edge to the Thread entity by ID if the given value is not nil.
+func (pc *PostCreate) SetNillableDescribedThreadID(id *uint64) *PostCreate {
+	if id != nil {
+		pc = pc.SetDescribedThreadID(*id)
+	}
+	return pc
+}
+
+// SetDescribedThread sets the "described_thread" edge to the Thread entity.
+func (pc *PostCreate) SetDescribedThread(t *Thread) *PostCreate {
+	return pc.SetDescribedThreadID(t.ID)
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (pc *PostCreate) SetUser(u *User) *PostCreate {
 	return pc.SetUserID(u.ID)
@@ -239,6 +258,25 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.ThreadID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.DescribedThreadIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   post.DescribedThreadTable,
+			Columns: []string{post.DescribedThreadColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUint64,
+					Column: thread.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	if nodes := pc.mutation.UserIDs(); len(nodes) > 0 {

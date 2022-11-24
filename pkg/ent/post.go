@@ -35,13 +35,15 @@ type Post struct {
 type PostEdges struct {
 	// Thread holds the value of the thread edge.
 	Thread *Thread `json:"thread,omitempty"`
+	// DescribedThread holds the value of the described_thread edge.
+	DescribedThread *Thread `json:"described_thread,omitempty"`
 	// User holds the value of the user edge.
 	User *User `json:"user,omitempty"`
 	// Attachments holds the value of the attachments edge.
 	Attachments []*Attachment `json:"attachments,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 }
 
 // ThreadOrErr returns the Thread value or an error if the edge
@@ -57,10 +59,23 @@ func (e PostEdges) ThreadOrErr() (*Thread, error) {
 	return nil, &NotLoadedError{edge: "thread"}
 }
 
+// DescribedThreadOrErr returns the DescribedThread value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PostEdges) DescribedThreadOrErr() (*Thread, error) {
+	if e.loadedTypes[1] {
+		if e.DescribedThread == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: thread.Label}
+		}
+		return e.DescribedThread, nil
+	}
+	return nil, &NotLoadedError{edge: "described_thread"}
+}
+
 // UserOrErr returns the User value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PostEdges) UserOrErr() (*User, error) {
-	if e.loadedTypes[1] {
+	if e.loadedTypes[2] {
 		if e.User == nil {
 			// Edge was loaded but was not found.
 			return nil, &NotFoundError{label: user.Label}
@@ -73,7 +88,7 @@ func (e PostEdges) UserOrErr() (*User, error) {
 // AttachmentsOrErr returns the Attachments value or an error if the edge
 // was not loaded in eager-loading.
 func (e PostEdges) AttachmentsOrErr() ([]*Attachment, error) {
-	if e.loadedTypes[2] {
+	if e.loadedTypes[3] {
 		return e.Attachments, nil
 	}
 	return nil, &NotLoadedError{edge: "attachments"}
@@ -143,6 +158,11 @@ func (po *Post) assignValues(columns []string, values []any) error {
 // QueryThread queries the "thread" edge of the Post entity.
 func (po *Post) QueryThread() *ThreadQuery {
 	return (&PostClient{config: po.config}).QueryThread(po)
+}
+
+// QueryDescribedThread queries the "described_thread" edge of the Post entity.
+func (po *Post) QueryDescribedThread() *ThreadQuery {
+	return (&PostClient{config: po.config}).QueryDescribedThread(po)
 }
 
 // QueryUser queries the "user" edge of the Post entity.

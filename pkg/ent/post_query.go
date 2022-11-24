@@ -21,15 +21,16 @@ import (
 // PostQuery is the builder for querying Post entities.
 type PostQuery struct {
 	config
-	limit           *int
-	offset          *int
-	unique          *bool
-	order           []OrderFunc
-	fields          []string
-	predicates      []predicate.Post
-	withThread      *ThreadQuery
-	withUser        *UserQuery
-	withAttachments *AttachmentQuery
+	limit               *int
+	offset              *int
+	unique              *bool
+	order               []OrderFunc
+	fields              []string
+	predicates          []predicate.Post
+	withThread          *ThreadQuery
+	withDescribedThread *ThreadQuery
+	withUser            *UserQuery
+	withAttachments     *AttachmentQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -81,6 +82,28 @@ func (pq *PostQuery) QueryThread() *ThreadQuery {
 			sqlgraph.From(post.Table, post.FieldID, selector),
 			sqlgraph.To(thread.Table, thread.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, post.ThreadTable, post.ThreadColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryDescribedThread chains the current query on the "described_thread" edge.
+func (pq *PostQuery) QueryDescribedThread() *ThreadQuery {
+	query := &ThreadQuery{config: pq.config}
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, selector),
+			sqlgraph.To(thread.Table, thread.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, post.DescribedThreadTable, post.DescribedThreadColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -308,14 +331,15 @@ func (pq *PostQuery) Clone() *PostQuery {
 		return nil
 	}
 	return &PostQuery{
-		config:          pq.config,
-		limit:           pq.limit,
-		offset:          pq.offset,
-		order:           append([]OrderFunc{}, pq.order...),
-		predicates:      append([]predicate.Post{}, pq.predicates...),
-		withThread:      pq.withThread.Clone(),
-		withUser:        pq.withUser.Clone(),
-		withAttachments: pq.withAttachments.Clone(),
+		config:              pq.config,
+		limit:               pq.limit,
+		offset:              pq.offset,
+		order:               append([]OrderFunc{}, pq.order...),
+		predicates:          append([]predicate.Post{}, pq.predicates...),
+		withThread:          pq.withThread.Clone(),
+		withDescribedThread: pq.withDescribedThread.Clone(),
+		withUser:            pq.withUser.Clone(),
+		withAttachments:     pq.withAttachments.Clone(),
 		// clone intermediate query.
 		sql:    pq.sql.Clone(),
 		path:   pq.path,
@@ -331,6 +355,17 @@ func (pq *PostQuery) WithThread(opts ...func(*ThreadQuery)) *PostQuery {
 		opt(query)
 	}
 	pq.withThread = query
+	return pq
+}
+
+// WithDescribedThread tells the query-builder to eager-load the nodes that are connected to
+// the "described_thread" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *PostQuery) WithDescribedThread(opts ...func(*ThreadQuery)) *PostQuery {
+	query := &ThreadQuery{config: pq.config}
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withDescribedThread = query
 	return pq
 }
 
@@ -424,8 +459,9 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	var (
 		nodes       = []*Post{}
 		_spec       = pq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			pq.withThread != nil,
+			pq.withDescribedThread != nil,
 			pq.withUser != nil,
 			pq.withAttachments != nil,
 		}
@@ -451,6 +487,12 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	if query := pq.withThread; query != nil {
 		if err := pq.loadThread(ctx, query, nodes, nil,
 			func(n *Post, e *Thread) { n.Edges.Thread = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withDescribedThread; query != nil {
+		if err := pq.loadDescribedThread(ctx, query, nodes, nil,
+			func(n *Post, e *Thread) { n.Edges.DescribedThread = e }); err != nil {
 			return nil, err
 		}
 	}
@@ -493,6 +535,30 @@ func (pq *PostQuery) loadThread(ctx context.Context, query *ThreadQuery, nodes [
 		for i := range nodes {
 			assign(nodes[i], n)
 		}
+	}
+	return nil
+}
+func (pq *PostQuery) loadDescribedThread(ctx context.Context, query *ThreadQuery, nodes []*Post, init func(*Post), assign func(*Post, *Thread)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[uint64]*Post)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.Where(predicate.Thread(func(s *sql.Selector) {
+		s.Where(sql.InValues(post.DescribedThreadColumn, fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.DescriptionID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "description_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
 	}
 	return nil
 }

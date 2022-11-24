@@ -494,6 +494,22 @@ func (c *PostClient) QueryThread(po *Post) *ThreadQuery {
 	return query
 }
 
+// QueryDescribedThread queries the described_thread edge of a Post.
+func (c *PostClient) QueryDescribedThread(po *Post) *ThreadQuery {
+	query := &ThreadQuery{config: c.config}
+	query.path = func(ctx context.Context) (fromV *sql.Selector, _ error) {
+		id := po.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, id),
+			sqlgraph.To(thread.Table, thread.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, post.DescribedThreadTable, post.DescribedThreadColumn),
+		)
+		fromV = sqlgraph.Neighbors(po.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // QueryUser queries the user edge of a Post.
 func (c *PostClient) QueryUser(po *Post) *UserQuery {
 	query := &UserQuery{config: c.config}
@@ -762,7 +778,7 @@ func (c *ThreadClient) QueryDescription(t *Thread) *PostQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(thread.Table, thread.FieldID, id),
 			sqlgraph.To(post.Table, post.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, thread.DescriptionTable, thread.DescriptionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, thread.DescriptionTable, thread.DescriptionColumn),
 		)
 		fromV = sqlgraph.Neighbors(t.driver.Dialect(), step)
 		return fromV, nil

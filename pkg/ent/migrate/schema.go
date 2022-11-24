@@ -68,7 +68,7 @@ var (
 				Symbol:     "posts_threads_posts",
 				Columns:    []*schema.Column{PostsColumns[3]},
 				RefColumns: []*schema.Column{ThreadsColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 			{
 				Symbol:     "posts_users_posts",
@@ -95,7 +95,7 @@ var (
 				Symbol:     "subcategories_categories_subcategories",
 				Columns:    []*schema.Column{SubcategoriesColumns[3]},
 				RefColumns: []*schema.Column{CategoriesColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -103,8 +103,8 @@ var (
 	ThreadsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
 		{Name: "name", Type: field.TypeString},
+		{Name: "description_id", Type: field.TypeUint64, Unique: true},
 		{Name: "subcategory_id", Type: field.TypeUint64},
-		{Name: "description_id", Type: field.TypeUint64},
 	}
 	// ThreadsTable holds the schema information for the "threads" table.
 	ThreadsTable = &schema.Table{
@@ -113,16 +113,16 @@ var (
 		PrimaryKey: []*schema.Column{ThreadsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "threads_subcategories_threads",
+				Symbol:     "threads_posts_described_thread",
 				Columns:    []*schema.Column{ThreadsColumns[2]},
-				RefColumns: []*schema.Column{SubcategoriesColumns[0]},
-				OnDelete:   schema.NoAction,
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.Cascade,
 			},
 			{
-				Symbol:     "threads_posts_description",
+				Symbol:     "threads_subcategories_threads",
 				Columns:    []*schema.Column{ThreadsColumns[3]},
-				RefColumns: []*schema.Column{PostsColumns[0]},
-				OnDelete:   schema.NoAction,
+				RefColumns: []*schema.Column{SubcategoriesColumns[0]},
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -144,7 +144,7 @@ var (
 	// UserMetadataColumns holds the columns for the "user_metadata" table.
 	UserMetadataColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
-		{Name: "color", Type: field.TypeString},
+		{Name: "name_color", Type: field.TypeString},
 		{Name: "title", Type: field.TypeString},
 		{Name: "gender", Type: field.TypeString},
 		{Name: "last_online", Type: field.TypeTime},
@@ -160,7 +160,7 @@ var (
 				Symbol:     "user_metadata_users_metadata",
 				Columns:    []*schema.Column{UserMetadataColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.NoAction,
+				OnDelete:   schema.Cascade,
 			},
 		},
 	}
@@ -182,7 +182,7 @@ func init() {
 	PostsTable.ForeignKeys[0].RefTable = ThreadsTable
 	PostsTable.ForeignKeys[1].RefTable = UsersTable
 	SubcategoriesTable.ForeignKeys[0].RefTable = CategoriesTable
-	ThreadsTable.ForeignKeys[0].RefTable = SubcategoriesTable
-	ThreadsTable.ForeignKeys[1].RefTable = PostsTable
+	ThreadsTable.ForeignKeys[0].RefTable = PostsTable
+	ThreadsTable.ForeignKeys[1].RefTable = SubcategoriesTable
 	UserMetadataTable.ForeignKeys[0].RefTable = UsersTable
 }

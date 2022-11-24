@@ -101,7 +101,7 @@ func (tq *ThreadQuery) QueryDescription() *PostQuery {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(thread.Table, thread.FieldID, selector),
 			sqlgraph.To(post.Table, post.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, thread.DescriptionTable, thread.DescriptionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, thread.DescriptionTable, thread.DescriptionColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(tq.driver.Dialect(), step)
 		return fromU, nil

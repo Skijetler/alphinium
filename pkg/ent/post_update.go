@@ -53,6 +53,25 @@ func (pu *PostUpdate) SetThread(t *Thread) *PostUpdate {
 	return pu.SetThreadID(t.ID)
 }
 
+// SetDescribedThreadID sets the "described_thread" edge to the Thread entity by ID.
+func (pu *PostUpdate) SetDescribedThreadID(id uint64) *PostUpdate {
+	pu.mutation.SetDescribedThreadID(id)
+	return pu
+}
+
+// SetNillableDescribedThreadID sets the "described_thread" edge to the Thread entity by ID if the given value is not nil.
+func (pu *PostUpdate) SetNillableDescribedThreadID(id *uint64) *PostUpdate {
+	if id != nil {
+		pu = pu.SetDescribedThreadID(*id)
+	}
+	return pu
+}
+
+// SetDescribedThread sets the "described_thread" edge to the Thread entity.
+func (pu *PostUpdate) SetDescribedThread(t *Thread) *PostUpdate {
+	return pu.SetDescribedThreadID(t.ID)
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (pu *PostUpdate) SetUser(u *User) *PostUpdate {
 	return pu.SetUserID(u.ID)
@@ -81,6 +100,12 @@ func (pu *PostUpdate) Mutation() *PostMutation {
 // ClearThread clears the "thread" edge to the Thread entity.
 func (pu *PostUpdate) ClearThread() *PostUpdate {
 	pu.mutation.ClearThread()
+	return pu
+}
+
+// ClearDescribedThread clears the "described_thread" edge to the Thread entity.
+func (pu *PostUpdate) ClearDescribedThread() *PostUpdate {
+	pu.mutation.ClearDescribedThread()
 	return pu
 }
 
@@ -242,6 +267,41 @@ func (pu *PostUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pu.mutation.DescribedThreadCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   post.DescribedThreadTable,
+			Columns: []string{post.DescribedThreadColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUint64,
+					Column: thread.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pu.mutation.DescribedThreadIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   post.DescribedThreadTable,
+			Columns: []string{post.DescribedThreadColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUint64,
+					Column: thread.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if pu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -373,6 +433,25 @@ func (puo *PostUpdateOne) SetThread(t *Thread) *PostUpdateOne {
 	return puo.SetThreadID(t.ID)
 }
 
+// SetDescribedThreadID sets the "described_thread" edge to the Thread entity by ID.
+func (puo *PostUpdateOne) SetDescribedThreadID(id uint64) *PostUpdateOne {
+	puo.mutation.SetDescribedThreadID(id)
+	return puo
+}
+
+// SetNillableDescribedThreadID sets the "described_thread" edge to the Thread entity by ID if the given value is not nil.
+func (puo *PostUpdateOne) SetNillableDescribedThreadID(id *uint64) *PostUpdateOne {
+	if id != nil {
+		puo = puo.SetDescribedThreadID(*id)
+	}
+	return puo
+}
+
+// SetDescribedThread sets the "described_thread" edge to the Thread entity.
+func (puo *PostUpdateOne) SetDescribedThread(t *Thread) *PostUpdateOne {
+	return puo.SetDescribedThreadID(t.ID)
+}
+
 // SetUser sets the "user" edge to the User entity.
 func (puo *PostUpdateOne) SetUser(u *User) *PostUpdateOne {
 	return puo.SetUserID(u.ID)
@@ -401,6 +480,12 @@ func (puo *PostUpdateOne) Mutation() *PostMutation {
 // ClearThread clears the "thread" edge to the Thread entity.
 func (puo *PostUpdateOne) ClearThread() *PostUpdateOne {
 	puo.mutation.ClearThread()
+	return puo
+}
+
+// ClearDescribedThread clears the "described_thread" edge to the Thread entity.
+func (puo *PostUpdateOne) ClearDescribedThread() *PostUpdateOne {
+	puo.mutation.ClearDescribedThread()
 	return puo
 }
 
@@ -579,6 +664,41 @@ func (puo *PostUpdateOne) sqlSave(ctx context.Context) (_node *Post, err error) 
 			Inverse: true,
 			Table:   post.ThreadTable,
 			Columns: []string{post.ThreadColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUint64,
+					Column: thread.FieldID,
+				},
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if puo.mutation.DescribedThreadCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   post.DescribedThreadTable,
+			Columns: []string{post.DescribedThreadColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: &sqlgraph.FieldSpec{
+					Type:   field.TypeUint64,
+					Column: thread.FieldID,
+				},
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := puo.mutation.DescribedThreadIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   post.DescribedThreadTable,
+			Columns: []string{post.DescribedThreadColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: &sqlgraph.FieldSpec{

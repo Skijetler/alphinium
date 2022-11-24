@@ -21,9 +21,9 @@ type UserMetadataCreate struct {
 	hooks    []Hook
 }
 
-// SetColor sets the "color" field.
-func (umc *UserMetadataCreate) SetColor(s string) *UserMetadataCreate {
-	umc.mutation.SetColor(s)
+// SetNameColor sets the "name_color" field.
+func (umc *UserMetadataCreate) SetNameColor(s string) *UserMetadataCreate {
+	umc.mutation.SetNameColor(s)
 	return umc
 }
 
@@ -138,8 +138,8 @@ func (umc *UserMetadataCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (umc *UserMetadataCreate) check() error {
-	if _, ok := umc.mutation.Color(); !ok {
-		return &ValidationError{Name: "color", err: errors.New(`ent: missing required field "UserMetadata.color"`)}
+	if _, ok := umc.mutation.NameColor(); !ok {
+		return &ValidationError{Name: "name_color", err: errors.New(`ent: missing required field "UserMetadata.name_color"`)}
 	}
 	if _, ok := umc.mutation.Title(); !ok {
 		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "UserMetadata.title"`)}
@@ -189,13 +189,13 @@ func (umc *UserMetadataCreate) createSpec() (*UserMetadata, *sqlgraph.CreateSpec
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := umc.mutation.Color(); ok {
+	if value, ok := umc.mutation.NameColor(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: usermetadata.FieldColor,
+			Column: usermetadata.FieldNameColor,
 		})
-		_node.Color = value
+		_node.NameColor = value
 	}
 	if value, ok := umc.mutation.Title(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

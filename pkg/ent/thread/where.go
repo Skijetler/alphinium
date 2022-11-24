@@ -305,7 +305,7 @@ func HasDescription() predicate.Thread {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DescriptionTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, DescriptionTable, DescriptionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, DescriptionTable, DescriptionColumn),
 		)
 		sqlgraph.HasNeighbors(s, step)
 	})
@@ -317,7 +317,7 @@ func HasDescriptionWith(preds ...predicate.Post) predicate.Thread {
 		step := sqlgraph.NewStep(
 			sqlgraph.From(Table, FieldID),
 			sqlgraph.To(DescriptionInverseTable, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, false, DescriptionTable, DescriptionColumn),
+			sqlgraph.Edge(sqlgraph.O2O, true, DescriptionTable, DescriptionColumn),
 		)
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {

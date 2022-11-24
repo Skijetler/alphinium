@@ -22,22 +22,34 @@ service Forum {
     };
   };
 
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryReply) {
+    option (google.api.http) = {
+      delete: "/forum/category/{category_id}"
+    };
+  };
+
   rpc GetAllCategories(GetAllCategoriesRequest) returns (GetAllCategoriesReply) {
     option (google.api.http) = {
       get: "/forum/categories/all"
     };
   };
 
-  rpc CreateSubCategory(CreateSubCategoryRequest) returns (CreateSubCategoryReply) {
+  rpc CreateSubcategory(CreateSubcategoryRequest) returns (CreateSubcategoryReply) {
     option (google.api.http) = {
       post: "/forum/subcategory/create"
       body: "*"
     };
   };
 
-  rpc GetSubCategory(GetSubCategoryRequest) returns (GetSubCategoryReply) {
+  rpc GetSubcategory(GetSubcategoryRequest) returns (GetSubcategoryReply) {
     option (google.api.http) = {
       get: "/forum/subcategory/{subcategory_id}"
+    };
+  };
+
+  rpc DeleteSubcategory(DeleteSubcategoryRequest) returns (DeleteSubcategoryReply) {
+    option (google.api.http) = {
+      delete: "/forum/subcategory/{subcategory_id}"
     };
   };
 
@@ -54,21 +66,50 @@ service Forum {
     };
   };
 
-  rpc ReplyToThread(ReplyToThreadRequest) returns (ReplyToThreadRequestReply) {
+  rpc ReplyToThread(ReplyToThreadRequest) returns (ReplyToThreadReply) {
     option (google.api.http) = {
       post: "/forum/thread/{thread_id}/reply"
       body: "*"
     };
   };
+
+  rpc GetThreadPosts(GetThreadPostsRequest) returns (GetThreadPostsReply) {
+    option (google.api.http) = {
+      get: "/forum/thread/{thread_id}/{page}"
+    };
+  };
+
+  rpc GetLastPosts(GetLastPostsRequest) returns (GetLastPostsReply) {
+    option (google.api.http) = {
+      get: "/forum/posts/last"
+    };
+  };
+
+  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadReply) {
+    option (google.api.http) = {
+      delete: "/forum/thread/{thread_id}"
+    };
+  };
+
+  rpc DeletePost(DeletePostRequest) returns (DeletePostReply) {
+    option (google.api.http) = {
+      delete: "/forum/post/{post_id}"
+    };
+  };
 }
 
 
-message CategoryBriefInfo {
+message CategoryBasicInfo {
   uint64 id = 1;
   string name = 2;
 }
 
-message SubCategoryBriefInfo {
+message SubcategoryBasicInfo {
+  uint64 id = 1;
+  string name = 2;
+}
+
+message ThreadBasicInfo {
   uint64 id = 1;
   string name = 2;
 }
@@ -78,7 +119,16 @@ message ThreadBriefInfo {
   string name = 2;
   uint64 creator_id = 3;
   string creator_name = 4;
-  google.protobuf.Timestamp creation_date = 5;
+  string creator_avatar = 5;
+  google.protobuf.Timestamp creation_date = 6;
+}
+
+message ThreadInfo {
+  uint64 id = 1;
+  string name = 2;
+  uint64 pages = 3;
+  ThreadPost description = 4;
+  repeated ThreadPost posts = 5;
 }
 
 message UserInfo {
@@ -86,6 +136,8 @@ message UserInfo {
   string name = 2;
   string name_color = 3;
   string title = 4;
+  string avatar = 5;
+  google.protobuf.Timestamp join_date = 6;
 }
 
 message ThreadPost {
@@ -93,7 +145,20 @@ message ThreadPost {
   UserInfo user = 2;
   string message = 3[(validate.rules).string = {min_len: 4, max_len: 25000}];
   google.protobuf.Timestamp date = 4;
-  repeated string attachments = 5;
+  repeated Attachment attachments = 5;
+}
+
+message ThreadPostCreation {
+  string message = 1[(validate.rules).string = {min_len: 4, max_len: 25000}];
+  repeated uint64 attachments_ids = 2;
+}
+
+message Attachment {
+  uint64 id = 1;
+  string name = 2;
+  string size = 3;
+  string type = 4;
+  string link = 5;
 }
 
 
@@ -110,35 +175,61 @@ message GetCategoryRequest {
 }
 
 message GetCategoryReply {
-  string category_name = 1;
-  repeated SubCategoryBriefInfo subcategories = 2;
+  CategoryBasicInfo basic_info = 1;
+  repeated SubcategoryBasicInfo subcategories = 2;
+}
+
+message DeleteCategoryRequest {
+  uint64 category_id = 1;
+}
+
+message DeleteCategoryReply {
+  bool succeed = 1;
 }
 
 message GetAllCategoriesRequest {}
 
 message GetAllCategoriesReply {
-  repeated CategoryBriefInfo categories = 1;
+  repeated CategoryBasicInfo categories = 1;
 }
 
-message CreateSubCategoryRequest {
+message CreateSubcategoryRequest {
   uint64 category_id = 1;
-  string subcategory_name = 2;
-  string subcategory_desc = 3;
+  string name = 2;
+  string description = 3;
 }
 
-message CreateSubCategoryReply {
+message CreateSubcategoryReply {
   uint64 subcategory_id = 1;
 }
 
-message GetSubCategoryRequest {
+message GetSubcategoryRequest {
   uint64 subcategory_id = 1;
 }
 
-message GetSubCategoryReply {
-  CategoryBriefInfo category = 1;
-  string subcategory_name = 2;
-  string subcategory_desc = 3;
+message GetSubcategoryReply {
+  SubcategoryBasicInfo basic_info = 1;
+  string description = 2;
+  uint64 pages = 3;
   repeated ThreadBriefInfo threads = 4;
+}
+
+message DeleteSubcategoryRequest {
+  uint64 subcategory_id = 1;
+}
+
+message DeleteSubcategoryReply {
+  bool succeed = 1;
+}
+
+message CreateThreadRequest {
+  uint64 category_id = 1;
+  string name = 2;
+  ThreadPostCreation description = 3;
+}
+
+message CreateThreadReply {
+  uint64 thread_id = 1;
 }
 
 message GetThreadRequest {
@@ -146,24 +237,49 @@ message GetThreadRequest {
 }
 
 message GetThreadReply {
-  ThreadBriefInfo basic_info = 1;
-  repeated ThreadPost posts  = 2;
+  ThreadBasicInfo basic_info = 1;
+  ThreadPost description = 2;
+  repeated ThreadPost posts = 3;
 }
 
-message CreateThreadRequest {
-  uint64 category_id = 1;
-  string thread_name = 2;
-  ThreadPost thread_description = 3;
-}
-
-message CreateThreadReply {
+message DeleteThreadRequest {
   uint64 thread_id = 1;
 }
 
-message ReplyToThreadRequest {
-  ThreadPost post = 1;
+message DeleteThreadReply {
+  bool succeed = 1;
 }
 
-message ReplyToThreadRequestReply {
+message ReplyToThreadRequest {
+  uint64 thread_id = 1;
+  ThreadPostCreation post = 2;
+}
+
+message ReplyToThreadReply {
+  bool succeed = 1;
+}
+
+message GetThreadPostsRequest {
+  uint64 thread_id = 1;
+  uint64 page = 2[(validate.rules).uint64 = {gte: 2}];
+}
+
+message GetThreadPostsReply {
+  repeated ThreadPost posts = 1;
+}
+
+message GetLastPostsRequest {
+  uint64 num = 1;
+}
+
+message GetLastPostsReply {
+  repeated ThreadPost posts = 1;
+}
+
+message DeletePostRequest {
+  uint64 post_id = 1;
+}
+
+message DeletePostReply {
   bool succeed = 1;
 }

@@ -17,8 +17,8 @@ type UserMetadata struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID uint64 `json:"id,omitempty"`
-	// Color holds the value of the "color" field.
-	Color string `json:"color,omitempty"`
+	// NameColor holds the value of the "name_color" field.
+	NameColor string `json:"name_color,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Gender holds the value of the "gender" field.
@@ -61,7 +61,7 @@ func (*UserMetadata) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case usermetadata.FieldID, usermetadata.FieldUserID:
 			values[i] = new(sql.NullInt64)
-		case usermetadata.FieldColor, usermetadata.FieldTitle, usermetadata.FieldGender:
+		case usermetadata.FieldNameColor, usermetadata.FieldTitle, usermetadata.FieldGender:
 			values[i] = new(sql.NullString)
 		case usermetadata.FieldLastOnline:
 			values[i] = new(sql.NullTime)
@@ -86,11 +86,11 @@ func (um *UserMetadata) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			um.ID = uint64(value.Int64)
-		case usermetadata.FieldColor:
+		case usermetadata.FieldNameColor:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field color", values[i])
+				return fmt.Errorf("unexpected type %T for field name_color", values[i])
 			} else if value.Valid {
-				um.Color = value.String
+				um.NameColor = value.String
 			}
 		case usermetadata.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -149,8 +149,8 @@ func (um *UserMetadata) String() string {
 	var builder strings.Builder
 	builder.WriteString("UserMetadata(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", um.ID))
-	builder.WriteString("color=")
-	builder.WriteString(um.Color)
+	builder.WriteString("name_color=")
+	builder.WriteString(um.NameColor)
 	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(um.Title)

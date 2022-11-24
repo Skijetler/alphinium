@@ -1216,22 +1216,24 @@ func (m *CategoryMutation) ResetEdge(name string) error {
 // PostMutation represents an operation that mutates the Post nodes in the graph.
 type PostMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *uint64
-	message            *string
-	date               *time.Time
-	clearedFields      map[string]struct{}
-	thread             *uint64
-	clearedthread      bool
-	user               *uint64
-	cleareduser        bool
-	attachments        map[uint64]struct{}
-	removedattachments map[uint64]struct{}
-	clearedattachments bool
-	done               bool
-	oldValue           func(context.Context) (*Post, error)
-	predicates         []predicate.Post
+	op                      Op
+	typ                     string
+	id                      *uint64
+	message                 *string
+	date                    *time.Time
+	clearedFields           map[string]struct{}
+	thread                  *uint64
+	clearedthread           bool
+	described_thread        *uint64
+	cleareddescribed_thread bool
+	user                    *uint64
+	cleareduser             bool
+	attachments             map[uint64]struct{}
+	removedattachments      map[uint64]struct{}
+	clearedattachments      bool
+	done                    bool
+	oldValue                func(context.Context) (*Post, error)
+	predicates              []predicate.Post
 }
 
 var _ ent.Mutation = (*PostMutation)(nil)
@@ -1508,6 +1510,45 @@ func (m *PostMutation) ResetThread() {
 	m.clearedthread = false
 }
 
+// SetDescribedThreadID sets the "described_thread" edge to the Thread entity by id.
+func (m *PostMutation) SetDescribedThreadID(id uint64) {
+	m.described_thread = &id
+}
+
+// ClearDescribedThread clears the "described_thread" edge to the Thread entity.
+func (m *PostMutation) ClearDescribedThread() {
+	m.cleareddescribed_thread = true
+}
+
+// DescribedThreadCleared reports if the "described_thread" edge to the Thread entity was cleared.
+func (m *PostMutation) DescribedThreadCleared() bool {
+	return m.cleareddescribed_thread
+}
+
+// DescribedThreadID returns the "described_thread" edge ID in the mutation.
+func (m *PostMutation) DescribedThreadID() (id uint64, exists bool) {
+	if m.described_thread != nil {
+		return *m.described_thread, true
+	}
+	return
+}
+
+// DescribedThreadIDs returns the "described_thread" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DescribedThreadID instead. It exists only for internal usage by the builders.
+func (m *PostMutation) DescribedThreadIDs() (ids []uint64) {
+	if id := m.described_thread; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDescribedThread resets all changes to the "described_thread" edge.
+func (m *PostMutation) ResetDescribedThread() {
+	m.described_thread = nil
+	m.cleareddescribed_thread = false
+}
+
 // ClearUser clears the "user" edge to the User entity.
 func (m *PostMutation) ClearUser() {
 	m.cleareduser = true
@@ -1760,9 +1801,12 @@ func (m *PostMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PostMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.thread != nil {
 		edges = append(edges, post.EdgeThread)
+	}
+	if m.described_thread != nil {
+		edges = append(edges, post.EdgeDescribedThread)
 	}
 	if m.user != nil {
 		edges = append(edges, post.EdgeUser)
@@ -1781,6 +1825,10 @@ func (m *PostMutation) AddedIDs(name string) []ent.Value {
 		if id := m.thread; id != nil {
 			return []ent.Value{*id}
 		}
+	case post.EdgeDescribedThread:
+		if id := m.described_thread; id != nil {
+			return []ent.Value{*id}
+		}
 	case post.EdgeUser:
 		if id := m.user; id != nil {
 			return []ent.Value{*id}
@@ -1797,7 +1845,7 @@ func (m *PostMutation) AddedIDs(name string) []ent.Value {
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PostMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.removedattachments != nil {
 		edges = append(edges, post.EdgeAttachments)
 	}
@@ -1820,9 +1868,12 @@ func (m *PostMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PostMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedthread {
 		edges = append(edges, post.EdgeThread)
+	}
+	if m.cleareddescribed_thread {
+		edges = append(edges, post.EdgeDescribedThread)
 	}
 	if m.cleareduser {
 		edges = append(edges, post.EdgeUser)
@@ -1839,6 +1890,8 @@ func (m *PostMutation) EdgeCleared(name string) bool {
 	switch name {
 	case post.EdgeThread:
 		return m.clearedthread
+	case post.EdgeDescribedThread:
+		return m.cleareddescribed_thread
 	case post.EdgeUser:
 		return m.cleareduser
 	case post.EdgeAttachments:
@@ -1854,6 +1907,9 @@ func (m *PostMutation) ClearEdge(name string) error {
 	case post.EdgeThread:
 		m.ClearThread()
 		return nil
+	case post.EdgeDescribedThread:
+		m.ClearDescribedThread()
+		return nil
 	case post.EdgeUser:
 		m.ClearUser()
 		return nil
@@ -1867,6 +1923,9 @@ func (m *PostMutation) ResetEdge(name string) error {
 	switch name {
 	case post.EdgeThread:
 		m.ResetThread()
+		return nil
+	case post.EdgeDescribedThread:
+		m.ResetDescribedThread()
 		return nil
 	case post.EdgeUser:
 		m.ResetUser()
@@ -3829,7 +3888,7 @@ type UserMetadataMutation struct {
 	op            Op
 	typ           string
 	id            *uint64
-	color         *string
+	name_color    *string
 	title         *string
 	gender        *string
 	last_online   *time.Time
@@ -3945,40 +4004,40 @@ func (m *UserMetadataMutation) IDs(ctx context.Context) ([]uint64, error) {
 	}
 }
 
-// SetColor sets the "color" field.
-func (m *UserMetadataMutation) SetColor(s string) {
-	m.color = &s
+// SetNameColor sets the "name_color" field.
+func (m *UserMetadataMutation) SetNameColor(s string) {
+	m.name_color = &s
 }
 
-// Color returns the value of the "color" field in the mutation.
-func (m *UserMetadataMutation) Color() (r string, exists bool) {
-	v := m.color
+// NameColor returns the value of the "name_color" field in the mutation.
+func (m *UserMetadataMutation) NameColor() (r string, exists bool) {
+	v := m.name_color
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldColor returns the old "color" field's value of the UserMetadata entity.
+// OldNameColor returns the old "name_color" field's value of the UserMetadata entity.
 // If the UserMetadata object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMetadataMutation) OldColor(ctx context.Context) (v string, err error) {
+func (m *UserMetadataMutation) OldNameColor(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldColor is only allowed on UpdateOne operations")
+		return v, errors.New("OldNameColor is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldColor requires an ID field in the mutation")
+		return v, errors.New("OldNameColor requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldColor: %w", err)
+		return v, fmt.Errorf("querying old value for OldNameColor: %w", err)
 	}
-	return oldValue.Color, nil
+	return oldValue.NameColor, nil
 }
 
-// ResetColor resets all changes to the "color" field.
-func (m *UserMetadataMutation) ResetColor() {
-	m.color = nil
+// ResetNameColor resets all changes to the "name_color" field.
+func (m *UserMetadataMutation) ResetNameColor() {
+	m.name_color = nil
 }
 
 // SetTitle sets the "title" field.
@@ -4171,8 +4230,8 @@ func (m *UserMetadataMutation) Type() string {
 // AddedFields().
 func (m *UserMetadataMutation) Fields() []string {
 	fields := make([]string, 0, 5)
-	if m.color != nil {
-		fields = append(fields, usermetadata.FieldColor)
+	if m.name_color != nil {
+		fields = append(fields, usermetadata.FieldNameColor)
 	}
 	if m.title != nil {
 		fields = append(fields, usermetadata.FieldTitle)
@@ -4194,8 +4253,8 @@ func (m *UserMetadataMutation) Fields() []string {
 // schema.
 func (m *UserMetadataMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case usermetadata.FieldColor:
-		return m.Color()
+	case usermetadata.FieldNameColor:
+		return m.NameColor()
 	case usermetadata.FieldTitle:
 		return m.Title()
 	case usermetadata.FieldGender:
@@ -4213,8 +4272,8 @@ func (m *UserMetadataMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *UserMetadataMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case usermetadata.FieldColor:
-		return m.OldColor(ctx)
+	case usermetadata.FieldNameColor:
+		return m.OldNameColor(ctx)
 	case usermetadata.FieldTitle:
 		return m.OldTitle(ctx)
 	case usermetadata.FieldGender:
@@ -4232,12 +4291,12 @@ func (m *UserMetadataMutation) OldField(ctx context.Context, name string) (ent.V
 // type.
 func (m *UserMetadataMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case usermetadata.FieldColor:
+	case usermetadata.FieldNameColor:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetColor(v)
+		m.SetNameColor(v)
 		return nil
 	case usermetadata.FieldTitle:
 		v, ok := value.(string)
@@ -4319,8 +4378,8 @@ func (m *UserMetadataMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *UserMetadataMutation) ResetField(name string) error {
 	switch name {
-	case usermetadata.FieldColor:
-		m.ResetColor()
+	case usermetadata.FieldNameColor:
+		m.ResetNameColor()
 		return nil
 	case usermetadata.FieldTitle:
 		m.ResetTitle()

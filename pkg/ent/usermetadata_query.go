@@ -289,12 +289,12 @@ func (umq *UserMetadataQuery) WithUser(opts ...func(*UserQuery)) *UserMetadataQu
 // Example:
 //
 //	var v []struct {
-//		Color string `json:"color,omitempty"`
+//		NameColor string `json:"name_color,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.UserMetadata.Query().
-//		GroupBy(usermetadata.FieldColor).
+//		GroupBy(usermetadata.FieldNameColor).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (umq *UserMetadataQuery) GroupBy(field string, fields ...string) *UserMetadataGroupBy {
@@ -317,11 +317,11 @@ func (umq *UserMetadataQuery) GroupBy(field string, fields ...string) *UserMetad
 // Example:
 //
 //	var v []struct {
-//		Color string `json:"color,omitempty"`
+//		NameColor string `json:"name_color,omitempty"`
 //	}
 //
 //	client.UserMetadata.Query().
-//		Select(usermetadata.FieldColor).
+//		Select(usermetadata.FieldNameColor).
 //		Scan(ctx, &v)
 func (umq *UserMetadataQuery) Select(fields ...string) *UserMetadataSelect {
 	umq.fields = append(umq.fields, fields...)

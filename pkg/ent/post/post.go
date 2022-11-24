@@ -17,6 +17,8 @@ const (
 	FieldThreadID = "thread_id"
 	// EdgeThread holds the string denoting the thread edge name in mutations.
 	EdgeThread = "thread"
+	// EdgeDescribedThread holds the string denoting the described_thread edge name in mutations.
+	EdgeDescribedThread = "described_thread"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// EdgeAttachments holds the string denoting the attachments edge name in mutations.
@@ -30,6 +32,13 @@ const (
 	ThreadInverseTable = "threads"
 	// ThreadColumn is the table column denoting the thread relation/edge.
 	ThreadColumn = "thread_id"
+	// DescribedThreadTable is the table that holds the described_thread relation/edge.
+	DescribedThreadTable = "threads"
+	// DescribedThreadInverseTable is the table name for the Thread entity.
+	// It exists in this package in order to avoid circular dependency with the "thread" package.
+	DescribedThreadInverseTable = "threads"
+	// DescribedThreadColumn is the table column denoting the described_thread relation/edge.
+	DescribedThreadColumn = "description_id"
 	// UserTable is the table that holds the user relation/edge.
 	UserTable = "posts"
 	// UserInverseTable is the table name for the User entity.

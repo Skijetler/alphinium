@@ -29,9 +29,9 @@ func (umu *UserMetadataUpdate) Where(ps ...predicate.UserMetadata) *UserMetadata
 	return umu
 }
 
-// SetColor sets the "color" field.
-func (umu *UserMetadataUpdate) SetColor(s string) *UserMetadataUpdate {
-	umu.mutation.SetColor(s)
+// SetNameColor sets the "name_color" field.
+func (umu *UserMetadataUpdate) SetNameColor(s string) *UserMetadataUpdate {
+	umu.mutation.SetNameColor(s)
 	return umu
 }
 
@@ -161,11 +161,11 @@ func (umu *UserMetadataUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := umu.mutation.Color(); ok {
+	if value, ok := umu.mutation.NameColor(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: usermetadata.FieldColor,
+			Column: usermetadata.FieldNameColor,
 		})
 	}
 	if value, ok := umu.mutation.Title(); ok {
@@ -243,9 +243,9 @@ type UserMetadataUpdateOne struct {
 	mutation *UserMetadataMutation
 }
 
-// SetColor sets the "color" field.
-func (umuo *UserMetadataUpdateOne) SetColor(s string) *UserMetadataUpdateOne {
-	umuo.mutation.SetColor(s)
+// SetNameColor sets the "name_color" field.
+func (umuo *UserMetadataUpdateOne) SetNameColor(s string) *UserMetadataUpdateOne {
+	umuo.mutation.SetNameColor(s)
 	return umuo
 }
 
@@ -405,11 +405,11 @@ func (umuo *UserMetadataUpdateOne) sqlSave(ctx context.Context) (_node *UserMeta
 			}
 		}
 	}
-	if value, ok := umuo.mutation.Color(); ok {
+	if value, ok := umuo.mutation.NameColor(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,
 			Value:  value,
-			Column: usermetadata.FieldColor,
+			Column: usermetadata.FieldNameColor,
 		})
 	}
 	if value, ok := umuo.mutation.Title(); ok {

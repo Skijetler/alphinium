@@ -224,8 +224,8 @@ func (tc *ThreadCreate) createSpec() (*Thread, *sqlgraph.CreateSpec) {
 	}
 	if nodes := tc.mutation.DescriptionIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: false,
+			Rel:     sqlgraph.O2O,
+			Inverse: true,
 			Table:   thread.DescriptionTable,
 			Columns: []string{thread.DescriptionColumn},
 			Bidi:    false,
